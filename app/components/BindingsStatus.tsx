@@ -68,7 +68,12 @@ export default function BindingsStatus() {
     let active = true;
     (async () => {
       try {
-        const res = await fetch("api/binding-status", { cache: "no-store" });
+        // import.meta.env.BASE_URL is populated by Vite from the `base` config
+        // (set in vite.config.ts from COSMIC_MOUNT_PATH). It always has a
+        // trailing slash, so `${BASE_URL}api/...` works whether base is "/" or
+        // "/mount-path/". Plain "api/..." would fail when the page URL lacks
+        // a trailing slash.
+        const res = await fetch(`${import.meta.env.BASE_URL}api/binding-status`, { cache: "no-store" });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = (await res.json()) as HealthcheckResponse;
         if (active) setData(json);
