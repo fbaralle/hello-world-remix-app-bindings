@@ -1,5 +1,21 @@
 import { useEffect, useState } from "react";
 
+/**
+ * Join the app's base mount path with an API path, normalizing slashes
+ * regardless of whether `BASE_URL` is "", "/", "/mount", or "/mount/".
+ * Returns "/<mount>/<path>" or "/<path>" when no mount is configured.
+ *
+ * `import.meta.env.BASE_URL` is populated by Vite from the `base` config
+ * (wired to COSMIC_MOUNT_PATH at build time). Its trailing-slash behavior
+ * is not guaranteed across versions / config inputs, so we normalize
+ * defensively here.
+ */
+function buildAppUrl(path: string): string {
+  const base = (import.meta.env.BASE_URL ?? "").replace(/\/+$/, "");
+  const cleanPath = path.replace(/^\/+/, "");
+  return `${base}/${cleanPath}`;
+}
+
 type Status = "ok" | "error" | "loading";
 
 interface ServiceStatus {
@@ -68,12 +84,7 @@ export default function BindingsStatus() {
     let active = true;
     (async () => {
       try {
-        // import.meta.env.BASE_URL is populated by Vite from the `base` config
-        // (set in vite.config.ts from COSMIC_MOUNT_PATH). It always has a
-        // trailing slash, so `${BASE_URL}api/...` works whether base is "/" or
-        // "/mount-path/". Plain "api/..." would fail when the page URL lacks
-        // a trailing slash.
-        const res = await fetch(`${import.meta.env.BASE_URL}api/binding-status`, { cache: "no-store" });
+        const res = await fetch(buildAppUrl("api/binding-status"), { cache: "no-store" });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = (await res.json()) as HealthcheckResponse;
         if (active) setData(json);
