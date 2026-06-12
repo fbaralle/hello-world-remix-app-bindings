@@ -7,6 +7,12 @@ At deploy time, Webflow Cloud provisions the configured services and injects the
 > Looking for the plain vanilla variant (no bindings)?
 > See [`hello-world-remix-app`](https://github.com/Webflow-Examples/hello-world-remix-app).
 
+> **Sentry / observability example:** the
+> [`feat/sentry-integration-example`](https://github.com/Webflow-Examples/hello-world-remix-app-bindings/tree/feat/sentry-integration-example)
+> branch adds a working Sentry setup — browser + server logs on every request,
+> error capture, and a recurring ping endpoint — validated on the Cloudflare
+> Workers runtime Webflow Cloud uses. See its README for setup.
+
 ## Requirements
 
 - Node **20+**
